@@ -1,0 +1,24 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.input {
+  padding: 10px 20px;
+  border-radius: 5px;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  font-size: 16px;
+
+  & span {
+    padding: 3px 10px;
+  }
+}
+
+.button {
+  cursor: pointer;
+}

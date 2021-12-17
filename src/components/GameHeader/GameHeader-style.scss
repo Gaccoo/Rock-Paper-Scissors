@@ -1,0 +1,26 @@
+.game-header {
+  display: flex;
+  justify-content: space-between;
+    width: 100%;
+    padding: 1% 5%;
+    align-items: center;
+
+}
+
+.player-window {
+  display: flex;
+  gap: 10px;
+  width: 40%;
+}
+
+.chips-icon {
+  width: 40px;
+}
+
+.logo-image {
+  width: 10%;
+}
+
+.right {
+  justify-content: right;
+}
