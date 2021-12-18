@@ -16,14 +16,17 @@ export const gameSlice = createSlice({
     goToLobby: (state) => {
       state.gameState = 'Lobby';
     },
-    setLost: (state) => {
+    setGameLost: (state) => {
       state.isLost = true;
+    },
+    resetGame: (state) => {
+      state.isLost = false;
     },
   },
 });
 // Action creators are generated for each case reducer function
 export const {
-  goToGame, goToLeaderboard, goToLobby, setLost,
+  goToGame, goToLeaderboard, goToLobby, setGameLost, resetGame,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

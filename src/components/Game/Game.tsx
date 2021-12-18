@@ -5,12 +5,15 @@ import GameHeader from '../GameHeader/GameHeader';
 import tableCard from '../../assets/table-card.png';
 import Popup from '../Popup/Popup';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { addPlayerChips, removePlayerChips } from '../../store/playerSlice';
+import { addPlayerChips, removePlayerChips, resetPlayerSlice } from '../../store/playerSlice';
 import {
   setOpponent, setOpponentTableCard, setPlayerTableCard, setTurnDone, setWinner, startNewHand,
 } from '../../store/handSlice';
-import { setLost } from '../../store/gameSlice';
+import { resetGame, setGameLost } from '../../store/gameSlice';
 import { addAiChips, removeAiChips, removeAiPlayer } from '../../store/AiSlice';
+import TableCards from '../TableCards';
+import GameInfo from '../GameInfo/GameInfo';
+import { selectRandomOpponent } from '../../App';
 
 export type HandProps = {
   isTurn: boolean
@@ -45,46 +48,63 @@ const Game = () => {
 
   const [popup, setPopup] = useState(false);
 
+  const playerWins = () => {
+    dispatch(addPlayerChips(10));
+    dispatch(removeAiChips({ index: hand.activeOpponent, amount: 10 }));
+  };
+
+  const playerLoses = () => {
+    dispatch(removePlayerChips(10));
+    dispatch(addAiChips({ index: hand.activeOpponent, amount: 10 }));
+  };
+
+  const putOpponentCardOnTable = () => {
+    const randomTime = Math.round(Math.random() * 5);
+    setTimeout(() => {
+      dispatch(setOpponentTableCard(generateOpponentCard()));
+    }, randomTime * 1000);
+  };
+
   useEffect(() => {
-    if (hand.isTurn && !hand.oCard) {
-      const randomTime = Math.round(Math.random() * 5);
-      setTimeout(() => {
-        dispatch(setOpponentTableCard(generateOpponentCard()));
-      }, randomTime * 1000);
+    const isOpponentsTurn = hand.isTurn && !hand.oCard;
+
+    if (player.chips < 10) {
+      dispatch(setGameLost());
+    }
+
+    if (AI[hand.activeOpponent as any].chips < 10) {
+      dispatch(removeAiPlayer(hand.activeOpponent));
+      dispatch(setOpponent(selectRandomOpponent(AI)));
+    }
+
+    if (isOpponentsTurn) {
+      putOpponentCardOnTable();
     }
 
     if (hand.pCard && hand.oCard) {
       const winner = getHandWinner(hand.pCard, hand.oCard);
+      dispatch(setWinner(winner));
+
       setTimeout(() => {
         setPopup(true);
-        dispatch(setWinner(winner));
       }, 1000);
 
       setTimeout(() => {
         if (winner === hand.pCard) {
-          dispatch(addPlayerChips(10));
-          // @ts-ignore
-          dispatch(removeAiChips({ index: hand.activeOpponent, amount: 10 }));
+          playerWins();
         } else if (winner === hand.oCard) {
-          if (player.chips - 10 <= 0) {
-            dispatch(removePlayerChips(10));
-            dispatch(setLost());
-            dispatch(addAiChips({ index: hand.activeOpponent, amount: 10 }));
-          } else {
-            dispatch(removePlayerChips(10));
-            dispatch(addAiChips({ index: hand.activeOpponent, amount: 10 }));
-          }
+          playerLoses();
         }
         if (!game.isLost) {
           dispatch(startNewHand());
         }
 
         setPopup(false);
-      }, 2000);
+      }, 3000);
     }
   }, [hand.pCard, hand.oCard]);
 
-  const turnHandler = async (value: CardName) => {
+  const playerTurnHandler = async (value: CardName) => {
     if (!hand.isTurn) {
       return;
     }
@@ -99,34 +119,14 @@ const Game = () => {
   return (
     <div className="game">
       <GameHeader />
-      <div className="table-cards">
-        {
-         hand.pCard ? <img className="pCard" src={tableCard} alt="Card" /> : null
-        }
 
-        {
-          hand.oCard ? <img className="oCard" src={tableCard} alt="Card" /> : null
-        }
-
-      </div>
-      <div className="game-info">
-        {
-          player.chips < 10 ? (
-            <div>
-              <h1>You`re out of chips!</h1>
-              <div className="button-wrapper">
-                <button className="input button">SWIPE CARD & PLAY AGAIN</button>
-              </div>
-            </div>
-          )
-            : null
-        }
-        <span>{hand.winner ? hand.winner : null}</span>
-
-      </div>
       {
-        player.chips < 10 ? null : <Controls onCardSelect={turnHandler} activeCard={hand.pCard} />
+        !game.isLost && <TableCards />
       }
+
+      <GameInfo />
+
+      <Controls onCardSelect={playerTurnHandler} activeCard={hand.pCard} hidden={game.isLost} />
 
       {
         popup ? <Popup hand={hand} onClick={closePopup} /> : null

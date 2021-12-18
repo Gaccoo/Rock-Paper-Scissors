@@ -8,6 +8,7 @@ import Scissors from '../../assets/cards/scissors.png';
 import Lizard from '../../assets/cards/lizard.png';
 import Spock from '../../assets/cards/spock.png';
 import Cheat from '../../assets/cards/cheat.png';
+import { useAppSelector } from '../../store/hooks';
 
 export type CardName = 'Rock' | 'Paper' | 'Scissors' | 'Lizard' | 'Spock' | 'Cheat'
 
@@ -42,13 +43,13 @@ export const cards: CardProps[] = [
 type GameProps = {
   onCardSelect: (cardName: CardName) => void
   activeCard: CardName | null
+  hidden: boolean
 }
 
-const Controls = ({ onCardSelect, activeCard }: GameProps) => {
+const Controls = ({ onCardSelect, activeCard, hidden }: GameProps) => {
   const [cheatCode, setCheatCode] = useState(false);
-
   return (
-    <div className="controls">
+    <div className="controls" style={hidden ? { opacity: 0 } : { opacity: 1 }}>
       {
         cards.filter((item) => {
           if (!cheatCode) {

@@ -16,6 +16,14 @@
   justify-content: flex-start;
   font-size: calc(10px + 2vmin);
   color: white;
+
+}
+
+.button-wrapper {
+  padding: 10px;
+  display: flex;
+  gap: 20px;
+  justify-content: center;
 }
 
 .logo {

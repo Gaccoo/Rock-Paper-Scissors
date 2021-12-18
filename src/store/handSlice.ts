@@ -15,6 +15,7 @@ export const handSlice = createSlice({
       state.oCard = null;
       state.winner = null;
     },
+
     setWinner: (state, { payload }) => {
       state.winner = payload;
     },

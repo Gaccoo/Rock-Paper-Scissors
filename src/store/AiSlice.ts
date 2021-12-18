@@ -4,20 +4,25 @@ import { createSlice } from '@reduxjs/toolkit';
 export type AIPlayer = {
   name: string
   chips: number
+  disqualified: boolean
 }
 
 const initialState: AIPlayer[] = [
-  { name: 'John', chips: 100 },
-  { name: 'Elena', chips: 100 },
-  { name: 'Mike', chips: 100 },
-  { name: 'Stanislav', chips: 100 },
-  { name: 'Muhamed', chips: 100 },
-  { name: 'Eva', chips: 100 },
-  { name: 'Oliver', chips: 100 },
-  { name: 'Hue', chips: 100 },
-  { name: 'Adam', chips: 100 },
-  { name: 'Lisa', chips: 100 },
-  { name: 'Maria', chips: 100 },
+  { name: 'John', chips: 10, disqualified: false },
+  { name: 'Elena', chips: 10, disqualified: false },
+  { name: 'Mike', chips: 10, disqualified: false },
+  { name: 'Stanislav', chips: 10, disqualified: false },
+  { name: 'Muhamed', chips: 10, disqualified: false },
+  { name: 'Eva', chips: 10, disqualified: false },
+  { name: 'Oliver', chips: 10, disqualified: false },
+  { name: 'Hue', chips: 10, disqualified: false },
+  { name: 'Adam', chips: 10, disqualified: false },
+  { name: 'Lisa', chips: 10, disqualified: false },
+  { name: 'Hernandez', chips: 10, disqualified: false },
+  { name: 'Patricia', chips: 10, disqualified: false },
+  { name: 'Mercedes', chips: 10, disqualified: false },
+  { name: 'Lola', chips: 10, disqualified: false },
+  { name: 'Anthony', chips: 10, disqualified: false },
 ];
 
 export const AiSlice = createSlice({
@@ -31,7 +36,7 @@ export const AiSlice = createSlice({
       state[payload.index].chips -= payload.amount;
     },
     removeAiPlayer: (state, { payload }) => {
-      console.log('AI PLAYER DISQUALIFIED');
+      state.splice(payload, 1);
     },
   },
 });

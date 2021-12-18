@@ -17,9 +17,14 @@ export const playerSlice = createSlice({
       state.name = payload.name;
       state.age = payload.age;
     },
+    resetPlayerSlice: (state) => {
+      state.chips = initialState.chips;
+    },
   },
 });
 // Action creators are generated for each case reducer function
-export const { addPlayerChips, removePlayerChips, setPlayerName } = playerSlice.actions;
+export const {
+  addPlayerChips, removePlayerChips, setPlayerName, resetPlayerSlice,
+} = playerSlice.actions;
 
 export default playerSlice.reducer;
