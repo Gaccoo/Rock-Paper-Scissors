@@ -1,16 +1,29 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './nameInput.style.scss';
-import { Player } from '../../App';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { setPlayerName } from '../../store/playerSlice';
+import { goToGame } from '../../store/gameSlice';
+import { setOpponent } from '../../store/handSlice';
+import { selectRandomOpponent } from '../../App';
 
-type AppProps = {
-  onSubmit: (value: {name: string, age: number}) => void
-}
-
-const NameInput = ({ onSubmit }: AppProps) => {
+const NameInput = () => {
+  // Redux store
+  const dispatch = useAppDispatch();
+  const AI = useAppSelector((store) => store.AiSlice);
+  const opponent = useAppSelector((store) => store.handSlice.activeOpponent);
+  // Local state
   const [nameInput, setNameInput] = useState({ name: '', age: 18 });
+
+  useEffect(() => {
+    if (!opponent) {
+      dispatch(setOpponent(selectRandomOpponent(AI)));
+    }
+  }, []);
+
   const submitHandler = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
-    onSubmit(nameInput);
+    dispatch(setPlayerName(nameInput));
+    dispatch(goToGame());
   };
 
   const isButtonActive = () => {

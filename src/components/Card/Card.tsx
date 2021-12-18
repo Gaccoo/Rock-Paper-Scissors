@@ -7,7 +7,7 @@ type CardProps = {
   id: number
   img: string
   onCardSelect?: (cardName: CardName) => void
-  activeCard?: CardName | undefined
+  activeCard?: CardName | null
   className: string
 }
 
@@ -19,7 +19,7 @@ const Card = ({
   useEffect(() => {
     setTimeout(() => {
       setVisible(true);
-    }, 3500);
+    }, 3000);
   }, [visible]);
 
   const clickHandler = (selected: CardName) => {

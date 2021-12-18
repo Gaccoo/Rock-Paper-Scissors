@@ -41,7 +41,7 @@ export const cards: CardProps[] = [
 
 type GameProps = {
   onCardSelect: (cardName: CardName) => void
-  activeCard: CardName | undefined
+  activeCard: CardName | null
 }
 
 const Controls = ({ onCardSelect, activeCard }: GameProps) => {

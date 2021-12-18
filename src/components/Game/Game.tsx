@@ -2,40 +2,26 @@ import React, { useEffect, useRef, useState } from 'react';
 import './Game.style.scss';
 import Controls, { CardName, cards } from '../Controls/Controls';
 import GameHeader from '../GameHeader/GameHeader';
-import { Player } from '../../App';
 import tableCard from '../../assets/table-card.png';
 import Popup from '../Popup/Popup';
-
-type AppProps = {
-  player: Player
-  updateChips: (value: number) => void
-}
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { addPlayerChips, removePlayerChips } from '../../store/playerSlice';
+import {
+  setOpponent, setOpponentTableCard, setPlayerTableCard, setTurnDone, setWinner, startNewHand,
+} from '../../store/handSlice';
+import { setLost } from '../../store/gameSlice';
+import { addAiChips, removeAiChips, removeAiPlayer } from '../../store/AiSlice';
 
 export type HandProps = {
   isTurn: boolean
-  pCard: CardName | undefined
-  oCard: CardName | undefined
-  winner: CardName | undefined | 'Tie'
+  pCard: CardName | null
+  oCard: CardName | null
+  winner: CardName | null | 'Tie'
   AI: {name: string, chips: number}
   isLost: boolean
 }
 
-const playersAI = [
-  { name: 'John', chips: 100 },
-  { name: 'Elena', chips: 100 },
-  { name: 'Mike', chips: 100 },
-  { name: 'Stanislav', chips: 100 },
-  { name: 'Muhamed', chips: 100 },
-  { name: 'Eva', chips: 100 },
-  { name: 'Oliver', chips: 100 },
-  { name: 'Hue', chips: 100 },
-  { name: 'Adam', chips: 100 },
-  { name: 'Lisa', chips: 100 },
-  { name: 'Maria', chips: 100 },
-];
-
 const generateOpponentCard = () => cards[Math.floor(Math.random() * (cards.length - 1))].name;
-const selectRandomOpponent = () => playersAI[Math.floor(Math.random() * playersAI.length)];
 
 const getHandWinner = (pCard: CardName, oCard: CardName) => {
   const playerCard = cards.find((card) => card.name === pCard);
@@ -49,60 +35,62 @@ const getHandWinner = (pCard: CardName, oCard: CardName) => {
   return 'Tie';
 };
 
-const addChips = (chipCount: number) => chipCount + 10;
-const removeChips = (chipCount: number) => chipCount - 10;
+const Game = () => {
+  // Redux store items
+  const dispatch = useAppDispatch();
+  const player = useAppSelector((store) => store.playerSlice);
+  const AI = useAppSelector((store) => store.AiSlice);
+  const hand = useAppSelector((store) => store.handSlice);
+  const game = useAppSelector((store) => store.gameSlice);
 
-const Game = ({ player, updateChips }: AppProps) => {
-  const [game, setGame] = useState<HandProps>({
-    isTurn: true, pCard: undefined, oCard: undefined, winner: undefined, AI: selectRandomOpponent(), isLost: false,
-  });
   const [popup, setPopup] = useState(false);
 
   useEffect(() => {
-    if (game.pCard && game.oCard) {
-      const winner = getHandWinner(game.pCard, game.oCard);
+    if (hand.isTurn && !hand.oCard) {
+      const randomTime = Math.round(Math.random() * 5);
+      setTimeout(() => {
+        dispatch(setOpponentTableCard(generateOpponentCard()));
+      }, randomTime * 1000);
+    }
+
+    if (hand.pCard && hand.oCard) {
+      const winner = getHandWinner(hand.pCard, hand.oCard);
       setTimeout(() => {
         setPopup(true);
-        setGame({ ...game, winner });
+        dispatch(setWinner(winner));
       }, 1000);
 
       setTimeout(() => {
-        if (winner === game.pCard) {
-          updateChips(addChips(player.chips));
-          game.AI.chips -= 10;
-        } else if (winner === game.oCard) {
+        if (winner === hand.pCard) {
+          dispatch(addPlayerChips(10));
+          // @ts-ignore
+          dispatch(removeAiChips({ index: hand.activeOpponent, amount: 10 }));
+        } else if (winner === hand.oCard) {
           if (player.chips - 10 <= 0) {
-            updateChips(removeChips(player.chips));
-            setGame({ ...game, isLost: true });
-            game.AI.chips += 10;
+            dispatch(removePlayerChips(10));
+            dispatch(setLost());
+            dispatch(addAiChips({ index: hand.activeOpponent, amount: 10 }));
           } else {
-            updateChips(removeChips(player.chips));
-            game.AI.chips += 10;
+            dispatch(removePlayerChips(10));
+            dispatch(addAiChips({ index: hand.activeOpponent, amount: 10 }));
           }
         }
         if (!game.isLost) {
-          setGame({
-            ...game,
-            isTurn: true,
-            pCard: undefined,
-            oCard: undefined,
-            winner: undefined,
-          });
+          dispatch(startNewHand());
         }
 
         setPopup(false);
       }, 2000);
     }
-  }, [game.pCard, game.oCard]);
+  }, [hand.pCard, hand.oCard]);
 
   const turnHandler = async (value: CardName) => {
-    if (!game.isTurn) {
+    if (!hand.isTurn) {
       return;
     }
+    dispatch(setTurnDone());
     if (player.chips > 0) {
-      setGame({
-        ...game, pCard: value, isTurn: false, oCard: generateOpponentCard(),
-      });
+      dispatch(setPlayerTableCard(value));
     }
   };
   const closePopup = () => {
@@ -110,14 +98,14 @@ const Game = ({ player, updateChips }: AppProps) => {
   };
   return (
     <div className="game">
-      <GameHeader player={player} AI={game.AI} />
+      <GameHeader />
       <div className="table-cards">
         {
-         game.pCard ? <img className="pCard" src={tableCard} alt="Card" /> : null
+         hand.pCard ? <img className="pCard" src={tableCard} alt="Card" /> : null
         }
 
         {
-          game.oCard ? <img className="oCard" src={tableCard} alt="Card" /> : null
+          hand.oCard ? <img className="oCard" src={tableCard} alt="Card" /> : null
         }
 
       </div>
@@ -133,15 +121,15 @@ const Game = ({ player, updateChips }: AppProps) => {
           )
             : null
         }
-        <span>{game.winner ? game.winner : null}</span>
+        <span>{hand.winner ? hand.winner : null}</span>
 
       </div>
       {
-        player.chips < 10 ? null : <Controls onCardSelect={turnHandler} activeCard={game.pCard} />
+        player.chips < 10 ? null : <Controls onCardSelect={turnHandler} activeCard={hand.pCard} />
       }
 
       {
-        popup ? <Popup hand={game} onClick={closePopup} /> : null
+        popup ? <Popup hand={hand} onClick={closePopup} /> : null
        }
     </div>
   );

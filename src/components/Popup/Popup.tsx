@@ -6,7 +6,7 @@ import { HandProps } from '../Game/Game';
 
 type AppProps = {
   onClick: () => void
-  hand: HandProps
+  hand: any
 }
 
 const Popup = ({ onClick, hand } : AppProps) => {

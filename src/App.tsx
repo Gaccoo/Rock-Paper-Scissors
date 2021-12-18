@@ -3,24 +3,13 @@ import logo from './assets/poker-logo.png';
 import './App.scss';
 import NameInput from './components/NameInput/NameInput';
 import Game from './components/Game/Game';
+import { useAppDispatch, useAppSelector } from './store/hooks';
+import { AIPlayer } from './store/AiSlice';
 
-type GameState = 'Lobby' | 'Game' | 'Leaderboard'
-export type Player = {
-  name: string
-  age: number
-  chips: number
-}
+export const selectRandomOpponent = (playerArray: AIPlayer[]) => Math.floor(Math.random() * playerArray.length);
+
 const App = () => {
-  const [player, setPlayer] = useState<Player>({ name: '', age: NaN, chips: 100 });
-  const [gameState, setGameState] = useState<GameState>('Lobby');
-  const setGame = (value: {name: string, age: number}) => {
-    setPlayer({ ...player, name: value.name, age: value.age });
-    setGameState('Game');
-  };
-
-  const updateChips = (value: number) => {
-    setPlayer({ ...player, chips: value });
-  };
+  const gameState = useAppSelector((store) => store.gameSlice.gameState);
 
   return (
     <div className="App-main">
@@ -28,11 +17,11 @@ const App = () => {
       {/*  <img className="image" src={logo} alt="Rock Paper Scissors Lizard Spock" /> */}
       {/* </div> */}
       {
-        gameState === 'Lobby' ? <NameInput onSubmit={setGame} /> : null
+        gameState === 'Lobby' ? <NameInput /> : null
       }
 
       {
-        gameState === 'Game' ? <Game player={player} updateChips={updateChips} /> : null
+        gameState === 'Game' ? <Game /> : null
       }
 
     </div>
