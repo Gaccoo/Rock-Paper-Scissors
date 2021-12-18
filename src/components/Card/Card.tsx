@@ -8,10 +8,11 @@ type CardProps = {
   img: string
   onCardSelect?: (cardName: CardName) => void
   activeCard?: CardName | undefined
+  className: string
 }
 
 const Card = ({
-  name, id, img, onCardSelect, activeCard,
+  name, id, img, onCardSelect, activeCard, className,
 }: CardProps) => {
   const [visible, setVisible] = useState(true);
 
@@ -32,7 +33,7 @@ const Card = ({
     // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
     <div
       style={name === activeCard ? { opacity: 0 } : { opacity: 1 }}
-      className="card"
+      className={className}
       role="img"
       aria-label={name}
       onClick={() => clickHandler(name)}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Controls.style.scss';
 import Card from '../Card/Card';
 
@@ -7,8 +7,9 @@ import Paper from '../../assets/cards/paper.png';
 import Scissors from '../../assets/cards/scissors.png';
 import Lizard from '../../assets/cards/lizard.png';
 import Spock from '../../assets/cards/spock.png';
+import Cheat from '../../assets/cards/cheat.png';
 
-export type CardName = 'Rock' | 'Paper' | 'Scissors' | 'Lizard' | 'Spock'
+export type CardName = 'Rock' | 'Paper' | 'Scissors' | 'Lizard' | 'Spock' | 'Cheat'
 
 type CardProps = {
   name: CardName
@@ -33,6 +34,9 @@ export const cards: CardProps[] = [
   {
     name: 'Spock', id: 4, img: Spock, beats: ['Rock', 'Scissors'],
   },
+  {
+    name: 'Cheat', id: 5, img: Cheat, beats: ['Rock', 'Paper', 'Scissors', 'Lizard', 'Spock'],
+  },
 ];
 
 type GameProps = {
@@ -41,15 +45,21 @@ type GameProps = {
 }
 
 const Controls = ({ onCardSelect, activeCard }: GameProps) => {
-  const a = 1;
+  const [cheatCode, setCheatCode] = useState(false);
 
   return (
     <div className="controls">
       {
-        cards.map(({ name, id, img }) => (
+        cards.filter((item) => {
+          if (!cheatCode) {
+            return item.id < 5;
+          }
+          return item;
+        }).map(({ name, id, img }) => (
           <Card
             activeCard={activeCard}
             name={name}
+            className="card"
             id={id}
             img={img}
             key={name}
@@ -57,6 +67,8 @@ const Controls = ({ onCardSelect, activeCard }: GameProps) => {
           />
         ))
       }
+
+      <div className="cheat-code" onClick={() => setCheatCode(!cheatCode)} />
     </div>
   );
 };

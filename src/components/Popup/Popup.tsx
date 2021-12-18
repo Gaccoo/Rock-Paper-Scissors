@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import './Popup.style.scss';
-import { CardName, cards } from '../Controls/Controls';
+import { cards } from '../Controls/Controls';
 import Card from '../Card/Card';
 import { HandProps } from '../Game/Game';
 
@@ -15,12 +15,14 @@ const Popup = ({ onClick, hand } : AppProps) => {
 
   return (
     <div className="popup" onClick={onClick}>
+
       {
-       playerCard ? <Card name={playerCard.name} id={playerCard.id} img={playerCard.img} /> : null
+       playerCard ? <Card className="static-card" name={playerCard.name} id={playerCard.id} img={playerCard.img} /> : null
       }
       {
-        opponentCard ? <Card name={opponentCard.name} id={opponentCard.id} img={opponentCard.img} /> : null
+        opponentCard ? <Card className="static-card" name={opponentCard.name} id={opponentCard.id} img={opponentCard.img} /> : null
       }
+
     </div>
   );
 };

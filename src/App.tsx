@@ -3,7 +3,6 @@ import logo from './assets/poker-logo.png';
 import './App.scss';
 import NameInput from './components/NameInput/NameInput';
 import Game from './components/Game/Game';
-import Popup from './components/Popup/Popup';
 
 type GameState = 'Lobby' | 'Game' | 'Leaderboard'
 export type Player = {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './Game.style.scss';
 import Controls, { CardName, cards } from '../Controls/Controls';
 import GameHeader from '../GameHeader/GameHeader';
@@ -17,6 +17,7 @@ export type HandProps = {
   oCard: CardName | undefined
   winner: CardName | undefined | 'Tie'
   AI: {name: string, chips: number}
+  isLost: boolean
 }
 
 const playersAI = [
@@ -33,7 +34,7 @@ const playersAI = [
   { name: 'Maria', chips: 100 },
 ];
 
-const generateOpponentCard = () => cards[Math.floor(Math.random() * (cards.length))].name;
+const generateOpponentCard = () => cards[Math.floor(Math.random() * (cards.length - 1))].name;
 const selectRandomOpponent = () => playersAI[Math.floor(Math.random() * playersAI.length)];
 
 const getHandWinner = (pCard: CardName, oCard: CardName) => {
@@ -52,72 +53,95 @@ const addChips = (chipCount: number) => chipCount + 10;
 const removeChips = (chipCount: number) => chipCount - 10;
 
 const Game = ({ player, updateChips }: AppProps) => {
-  const [hand, setHand] = useState<HandProps>({
-    isTurn: true, pCard: undefined, oCard: undefined, winner: undefined, AI: selectRandomOpponent(),
+  const [game, setGame] = useState<HandProps>({
+    isTurn: true, pCard: undefined, oCard: undefined, winner: undefined, AI: selectRandomOpponent(), isLost: false,
   });
   const [popup, setPopup] = useState(false);
 
   useEffect(() => {
-    if (hand.pCard && hand.oCard) {
-      const winner = getHandWinner(hand.pCard, hand.oCard);
+    if (game.pCard && game.oCard) {
+      const winner = getHandWinner(game.pCard, game.oCard);
       setTimeout(() => {
         setPopup(true);
-        setHand({ ...hand, winner });
+        setGame({ ...game, winner });
       }, 1000);
 
       setTimeout(() => {
-        if (winner === hand.pCard) {
+        if (winner === game.pCard) {
           updateChips(addChips(player.chips));
-          hand.AI.chips -= 10;
-        } else if (winner === hand.oCard) {
-          updateChips(removeChips(player.chips));
-          hand.AI.chips += 10;
+          game.AI.chips -= 10;
+        } else if (winner === game.oCard) {
+          if (player.chips - 10 <= 0) {
+            updateChips(removeChips(player.chips));
+            setGame({ ...game, isLost: true });
+            game.AI.chips += 10;
+          } else {
+            updateChips(removeChips(player.chips));
+            game.AI.chips += 10;
+          }
         }
-        setHand({
-          ...hand,
-          isTurn: true,
-          pCard: undefined,
-          oCard: undefined,
-          winner: undefined,
-        });
+        if (!game.isLost) {
+          setGame({
+            ...game,
+            isTurn: true,
+            pCard: undefined,
+            oCard: undefined,
+            winner: undefined,
+          });
+        }
+
         setPopup(false);
-      }, 5000);
+      }, 2000);
     }
-  }, [hand.pCard, hand.oCard]);
+  }, [game.pCard, game.oCard]);
 
   const turnHandler = async (value: CardName) => {
-    if (!hand.isTurn) {
+    if (!game.isTurn) {
       return;
     }
-    setHand({
-      ...hand, pCard: value, isTurn: false, oCard: generateOpponentCard(),
-    });
+    if (player.chips > 0) {
+      setGame({
+        ...game, pCard: value, isTurn: false, oCard: generateOpponentCard(),
+      });
+    }
   };
   const closePopup = () => {
     setPopup(false);
   };
   return (
     <div className="game">
-      <GameHeader player={player} AI={hand.AI} />
+      <GameHeader player={player} AI={game.AI} />
       <div className="table-cards">
         {
-         hand.pCard ? <img className="pCard" src={tableCard} alt="Card" /> : null
+         game.pCard ? <img className="pCard" src={tableCard} alt="Card" /> : null
         }
 
         {
-          hand.oCard ? <img className="oCard" src={tableCard} alt="Card" /> : null
+          game.oCard ? <img className="oCard" src={tableCard} alt="Card" /> : null
         }
 
       </div>
       <div className="game-info">
-
-        <span>{hand.winner ? hand.winner : null}</span>
+        {
+          player.chips < 10 ? (
+            <div>
+              <h1>You`re out of chips!</h1>
+              <div className="button-wrapper">
+                <button className="input button">SWIPE CARD & PLAY AGAIN</button>
+              </div>
+            </div>
+          )
+            : null
+        }
+        <span>{game.winner ? game.winner : null}</span>
 
       </div>
-      <Controls onCardSelect={turnHandler} activeCard={hand.pCard} />
+      {
+        player.chips < 10 ? null : <Controls onCardSelect={turnHandler} activeCard={game.pCard} />
+      }
 
       {
-        popup ? <Popup hand={hand} onClick={closePopup} /> : null
+        popup ? <Popup hand={game} onClick={closePopup} /> : null
        }
     </div>
   );

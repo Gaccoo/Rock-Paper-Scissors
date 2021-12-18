@@ -43,8 +43,9 @@ const NameInput = ({ onSubmit }: AppProps) => {
             value={nameInput.age}
             onChange={(e) => setNameInput({ ...nameInput, age: +e.target.value })}
           />
+          <span style={nameInput.age < 18 ? { opacity: 1 } : { opacity: 0 }} className="error">You must be 18 or older to gamble...</span>
         </label>
-        <input disabled={!isButtonActive()} className="input field" type="submit" value="START GAME" />
+        <input disabled={!isButtonActive()} className="input button" type="submit" value="START GAME" />
       </form>
     </div>
   );

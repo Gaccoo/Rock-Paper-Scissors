@@ -1,4 +1,6 @@
-.card {
+
+
+.card, .static-card {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -14,30 +16,32 @@
   box-shadow: rgba(0, 0, 0, 0.56) 0 22px 70px 4px;
   position: relative;
 
-  &:after {
-    content: " ";
-    z-index: 1;
-    display: block;
-    position: absolute;
-    height: 100%;
-    top: 0;
-    left: 0;
-    right: 0;
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
-    transition: 0.5s;
-  }
-
-  &:hover {
-    margin: 0 0 30px 0;
-    box-shadow: rgba(3, 102, 214, 0.3) 0 0 0 3px;
-  }
-
   &:hover:after {
     background: rgba(0, 0, 0, 0);
   }
 }
 
+.static-card {
+
+}
+
+.card:hover {
+     margin: 0 0 30px 0;
+     box-shadow: rgba(3, 102, 214, 0.3) 0 0 0 3px;
+   }
+.card:after {
+  content: " ";
+  z-index: 1;
+  display: block;
+  position: absolute;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  transition: 0.5s;
+}
 .card-image {
   width: 70%;
 }
