@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './Controls.style.scss';
+import './GameControls.style.scss';
 import Card from '../Card/Card';
 
 import Rock from '../../assets/cards/rock.png';
@@ -8,7 +8,6 @@ import Scissors from '../../assets/cards/scissors.png';
 import Lizard from '../../assets/cards/lizard.png';
 import Spock from '../../assets/cards/spock.png';
 import Cheat from '../../assets/cards/cheat.png';
-import { useAppSelector } from '../../store/hooks';
 
 export type CardName = 'Rock' | 'Paper' | 'Scissors' | 'Lizard' | 'Spock' | 'Cheat'
 
@@ -46,7 +45,7 @@ type GameProps = {
   hidden: boolean
 }
 
-const Controls = ({ onCardSelect, activeCard, hidden }: GameProps) => {
+const GameControls = ({ onCardSelect, activeCard, hidden }: GameProps) => {
   const [cheatCode, setCheatCode] = useState(false);
   return (
     <div className="controls" style={hidden ? { opacity: 0 } : { opacity: 1 }}>
@@ -74,4 +73,4 @@ const Controls = ({ onCardSelect, activeCard, hidden }: GameProps) => {
   );
 };
 
-export default Controls;
+export default GameControls;

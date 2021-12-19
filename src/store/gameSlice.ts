@@ -3,9 +3,13 @@ import { createSlice } from '@reduxjs/toolkit';
 
 export type GameState = 'Lobby' | 'Game' | 'Leaderboard'
 
+const initialState = {
+  gameState: 'Lobby', isLost: false, isWon: false,
+};
+
 export const gameSlice = createSlice({
   name: 'gameSlice',
-  initialState: { gameState: 'Lobby', isLost: false },
+  initialState,
   reducers: {
     goToGame: (state) => {
       state.gameState = 'Game';
@@ -19,14 +23,16 @@ export const gameSlice = createSlice({
     setGameLost: (state) => {
       state.isLost = true;
     },
-    resetGame: (state) => {
-      state.isLost = false;
+    setGameWon: (state) => {
+      state.isWon = true;
     },
+    resetGameSlice: () => initialState,
+
   },
 });
 // Action creators are generated for each case reducer function
 export const {
-  goToGame, goToLeaderboard, goToLobby, setGameLost, resetGame,
+  goToGame, goToLeaderboard, goToLobby, setGameLost, resetGameSlice, setGameWon,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

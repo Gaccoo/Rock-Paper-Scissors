@@ -1,8 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import './Popup.style.scss';
-import { cards } from '../Controls/Controls';
+import { cards } from '../GameControls/GameControls';
 import Card from '../Card/Card';
-import { HandProps } from '../Game/Game';
 
 type AppProps = {
   onClick: () => void
@@ -17,10 +16,24 @@ const Popup = ({ onClick, hand } : AppProps) => {
     <div className="popup" onClick={onClick}>
 
       {
-       playerCard ? <Card className="static-card" name={playerCard.name} id={playerCard.id} img={playerCard.img} /> : null
+       playerCard ? (
+         <Card
+           className="static-card"
+           name={playerCard.name}
+           id={playerCard.id}
+           img={playerCard.img}
+         />
+       ) : null
       }
       {
-        opponentCard ? <Card className="static-card" name={opponentCard.name} id={opponentCard.id} img={opponentCard.img} /> : null
+        opponentCard ? (
+          <Card
+            className="static-card"
+            name={opponentCard.name}
+            id={opponentCard.id}
+            img={opponentCard.img}
+          />
+        ) : null
       }
 
     </div>

@@ -1,17 +1,23 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Game.style.scss';
-import Controls, { CardName, cards } from '../Controls/Controls';
+import GameControls, { CardName, cards } from '../GameControls/GameControls';
 import GameHeader from '../GameHeader/GameHeader';
-import tableCard from '../../assets/table-card.png';
+
 import Popup from '../Popup/Popup';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { addPlayerChips, removePlayerChips, resetPlayerSlice } from '../../store/playerSlice';
+import {
+  addPlayerChips, addTurnCount, removePlayerChips,
+} from '../../store/playerSlice';
 import {
   setOpponent, setOpponentTableCard, setPlayerTableCard, setTurnDone, setWinner, startNewHand,
 } from '../../store/handSlice';
-import { resetGame, setGameLost } from '../../store/gameSlice';
-import { addAiChips, removeAiChips, removeAiPlayer } from '../../store/AiSlice';
-import TableCards from '../TableCards';
+import {
+  setGameLost, setGameWon,
+} from '../../store/gameSlice';
+import {
+  addAiChips, removeAiChips, removeAiPlayer,
+} from '../../store/AiSlice';
+import TableItems from '../TableItems/TableItems';
 import GameInfo from '../GameInfo/GameInfo';
 import { selectRandomOpponent } from '../../App';
 
@@ -39,14 +45,14 @@ const getHandWinner = (pCard: CardName, oCard: CardName) => {
 };
 
 const Game = () => {
-  // Redux store items
+  const [popup, setPopup] = useState(false);
   const dispatch = useAppDispatch();
   const player = useAppSelector((store) => store.playerSlice);
-  const AI = useAppSelector((store) => store.AiSlice);
+  const CPUPlayer = useAppSelector((store) => store.AiSlice);
   const hand = useAppSelector((store) => store.handSlice);
   const game = useAppSelector((store) => store.gameSlice);
-
-  const [popup, setPopup] = useState(false);
+  const playersRemaining = useAppSelector((state) => state.AiSlice
+    .filter((item) => !item.disqualified).length) > 0;
 
   const playerWins = () => {
     dispatch(addPlayerChips(10));
@@ -65,19 +71,42 @@ const Game = () => {
     }, randomTime * 1000);
   };
 
+  const openPopup = () => {
+    setTimeout(() => {
+      setPopup(true);
+    }, 1000);
+  };
+
+  const onSelectCard = (value: CardName) => {
+    if (!hand.isTurn || player.chips === 0 || !playersRemaining) {
+      return;
+    }
+    dispatch(setTurnDone());
+    dispatch(setPlayerTableCard(value));
+    dispatch(addTurnCount());
+  };
+
   useEffect(() => {
+    const hasNoChipsOpponent = CPUPlayer[hand.activeOpponent as any].chips < 10;
+    if (!playersRemaining || game.isLost) {
+      dispatch(setGameWon());
+    }
+
+    if (hasNoChipsOpponent && playersRemaining) {
+      dispatch(removeAiPlayer(hand.activeOpponent));
+      dispatch(setOpponent(selectRandomOpponent(CPUPlayer)));
+    }
+  }, [CPUPlayer[hand.activeOpponent as any]]);
+
+  useEffect(() => {
+    const remainingPlayers = CPUPlayer.filter((item) => !item.disqualified).length;
     const isOpponentsTurn = hand.isTurn && !hand.oCard;
 
-    if (player.chips < 10) {
+    if (player.chips < 10 && !game.isLost) {
       dispatch(setGameLost());
     }
 
-    if (AI[hand.activeOpponent as any].chips < 10) {
-      dispatch(removeAiPlayer(hand.activeOpponent));
-      dispatch(setOpponent(selectRandomOpponent(AI)));
-    }
-
-    if (isOpponentsTurn) {
+    if (isOpponentsTurn && remainingPlayers > 0) {
       putOpponentCardOnTable();
     }
 
@@ -85,9 +114,7 @@ const Game = () => {
       const winner = getHandWinner(hand.pCard, hand.oCard);
       dispatch(setWinner(winner));
 
-      setTimeout(() => {
-        setPopup(true);
-      }, 1000);
+      openPopup();
 
       setTimeout(() => {
         if (winner === hand.pCard) {
@@ -95,6 +122,7 @@ const Game = () => {
         } else if (winner === hand.oCard) {
           playerLoses();
         }
+
         if (!game.isLost) {
           dispatch(startNewHand());
         }
@@ -104,33 +132,13 @@ const Game = () => {
     }
   }, [hand.pCard, hand.oCard]);
 
-  const playerTurnHandler = async (value: CardName) => {
-    if (!hand.isTurn) {
-      return;
-    }
-    dispatch(setTurnDone());
-    if (player.chips > 0) {
-      dispatch(setPlayerTableCard(value));
-    }
-  };
-  const closePopup = () => {
-    setPopup(false);
-  };
   return (
     <div className="game">
       <GameHeader />
-
-      {
-        !game.isLost && <TableCards />
-      }
-
+      {!game.isLost && <TableItems />}
       <GameInfo />
-
-      <Controls onCardSelect={playerTurnHandler} activeCard={hand.pCard} hidden={game.isLost} />
-
-      {
-        popup ? <Popup hand={hand} onClick={closePopup} /> : null
-       }
+      <GameControls onCardSelect={onSelectCard} activeCard={hand.pCard} hidden={game.isLost} />
+      {popup ? <Popup hand={hand} onClick={() => setPopup(false)} /> : null}
     </div>
   );
 };

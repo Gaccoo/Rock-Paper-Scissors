@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './Card.style.scss';
-import { CardName } from '../Controls/Controls';
+import { CardName } from '../GameControls/GameControls';
 
 type CardProps = {
   name: CardName
@@ -38,7 +38,7 @@ const Card = ({
       aria-label={name}
       onClick={() => clickHandler(name)}
     >
-      <img className="card-image" src={img} alt={name} />
+      <img className="card-image" id={id.toString()} src={img} alt={name} />
       <span>{name}</span>
     </div>
   );

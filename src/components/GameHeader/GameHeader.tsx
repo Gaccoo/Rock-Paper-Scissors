@@ -19,8 +19,8 @@ const GameHeader = () => {
         <img className="logo-image" src={logo} alt="Logo" />
       </div>
       <div className="player-window right">
-        <span>{opponent.name}</span>
-        <span>{opponent.chips}</span>
+        <span>{opponent ? opponent.name : ''}</span>
+        <span>{opponent ? opponent.chips : ''}</span>
         <img className="chips-icon" src={chipIcon} alt="Chips" />
       </div>
     </div>
