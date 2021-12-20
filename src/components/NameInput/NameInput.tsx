@@ -41,6 +41,7 @@ const NameInput = () => {
           <input
             className="input field"
             value={nameInput.name}
+            maxLength={20}
             onChange={(e) => setNameInput({ ...nameInput, name: e.target.value })}
             type="text"
             placeholder="Enter your name..."

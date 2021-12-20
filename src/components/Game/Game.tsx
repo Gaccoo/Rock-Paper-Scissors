@@ -12,6 +12,7 @@ import {
   setOpponent, setOpponentTableCard, setPlayerTableCard, setTurnDone, setWinner, startNewHand,
 } from '../../store/handSlice';
 import {
+  advanceRound,
   setGameLost, setGameWon,
 } from '../../store/gameSlice';
 import {
@@ -54,14 +55,21 @@ const Game = () => {
   const playersRemaining = useAppSelector((state) => state.AiSlice
     .filter((item) => !item.disqualified).length) > 0;
 
+  const betAmount = () => {
+    const playerChips = player.chips;
+    const CPUChips = CPUPlayer[hand.activeOpponent as any].chips;
+    const bet = game.round * 200;
+    return Math.min(playerChips, CPUChips, bet);
+  };
+
   const playerWins = () => {
-    dispatch(addPlayerChips(10));
-    dispatch(removeAiChips({ index: hand.activeOpponent, amount: 10 }));
+    dispatch(addPlayerChips(betAmount()));
+    dispatch(removeAiChips({ index: hand.activeOpponent, amount: betAmount() }));
   };
 
   const playerLoses = () => {
-    dispatch(removePlayerChips(10));
-    dispatch(addAiChips({ index: hand.activeOpponent, amount: 10 }));
+    dispatch(removePlayerChips(betAmount()));
+    dispatch(addAiChips({ index: hand.activeOpponent, amount: betAmount() }));
   };
 
   const putOpponentCardOnTable = () => {
@@ -71,7 +79,23 @@ const Game = () => {
     }, randomTime * 1000);
   };
 
-  const openPopup = () => {
+  const updateChipsAndClosePopupAfter3s = (winner: string) => {
+    setTimeout(() => {
+      if (winner === hand.pCard) {
+        playerWins();
+      } else if (winner === hand.oCard) {
+        playerLoses();
+      }
+
+      if (!game.isLost) {
+        dispatch(startNewHand());
+      }
+
+      setPopup(false);
+    }, 4000);
+  };
+
+  const openPopupAfter1s = () => {
     setTimeout(() => {
       setPopup(true);
     }, 1000);
@@ -86,6 +110,8 @@ const Game = () => {
     dispatch(addTurnCount());
   };
 
+  // Effects & Component
+
   useEffect(() => {
     const hasNoChipsOpponent = CPUPlayer[hand.activeOpponent as any].chips < 10;
     if (!playersRemaining || game.isLost) {
@@ -95,6 +121,9 @@ const Game = () => {
     if (hasNoChipsOpponent && playersRemaining) {
       dispatch(removeAiPlayer(hand.activeOpponent));
       dispatch(setOpponent(selectRandomOpponent(CPUPlayer)));
+      if (hand.pCard && hand.oCard) {
+        dispatch(advanceRound());
+      }
     }
   }, [CPUPlayer[hand.activeOpponent as any]]);
 
@@ -114,21 +143,8 @@ const Game = () => {
       const winner = getHandWinner(hand.pCard, hand.oCard);
       dispatch(setWinner(winner));
 
-      openPopup();
-
-      setTimeout(() => {
-        if (winner === hand.pCard) {
-          playerWins();
-        } else if (winner === hand.oCard) {
-          playerLoses();
-        }
-
-        if (!game.isLost) {
-          dispatch(startNewHand());
-        }
-
-        setPopup(false);
-      }, 3000);
+      openPopupAfter1s();
+      updateChipsAndClosePopupAfter3s(winner);
     }
   }, [hand.pCard, hand.oCard]);
 

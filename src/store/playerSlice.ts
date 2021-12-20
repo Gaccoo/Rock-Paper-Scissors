@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 // Define a type for the slice state
 
 const initialState = {
-  name: '', age: 18, chips: 10, turns: 0,
+  name: '', age: 18, chips: 2000, turns: 0,
 };
 
 export const playerSlice = createSlice({

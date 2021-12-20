@@ -8,10 +8,10 @@ export type AIPlayer = {
 }
 
 const initialState: AIPlayer[] = [
-  { name: 'John', chips: 10, disqualified: false },
-  { name: 'Elena', chips: 10, disqualified: false },
-  { name: 'Mike', chips: 10, disqualified: false },
-  { name: 'Stanislav', chips: 10, disqualified: false },
+  { name: 'John', chips: 16000, disqualified: false },
+  { name: 'Elena', chips: 8000, disqualified: false },
+  { name: 'Mike', chips: 4000, disqualified: false },
+  { name: 'Stanislav', chips: 2000, disqualified: false },
 ];
 
 export const AiSlice = createSlice({
@@ -27,18 +27,14 @@ export const AiSlice = createSlice({
     removeAiPlayer: (state, { payload }) => {
       state[payload].disqualified = true;
     },
-    advanceRound: (state) => {
-      state.forEach((item, index) => {
-        state[index].chips *= 2;
-      });
-    },
+
     resetAiSlice: () => initialState,
 
   },
 });
 // Action creators are generated for each case reducer function
 export const {
-  addAiChips, removeAiChips, removeAiPlayer, advanceRound, resetAiSlice,
+  addAiChips, removeAiChips, removeAiPlayer, resetAiSlice,
 } = AiSlice.actions;
 
 export default AiSlice.reducer;
