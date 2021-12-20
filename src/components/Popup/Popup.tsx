@@ -5,11 +5,10 @@ import Card from '../Card/Card';
 import { useAppSelector } from '../../store/hooks';
 
 type AppProps = {
-  onClick: () => void
   hand: any
 }
 
-const Popup = ({ onClick, hand } : AppProps) => {
+const Popup = ({ hand } : AppProps) => {
   const playerCard = cards.find((item) => item.name === hand.pCard);
   const opponentCard = cards.find((item) => item.name === hand.oCard);
   const playerWins = useAppSelector((store) => store.handSlice.winner === hand.pCard);
@@ -31,7 +30,7 @@ const Popup = ({ onClick, hand } : AppProps) => {
   };
 
   return (
-    <div className="popup" onClick={onClick}>
+    <div className="popup">
 
       {
        playerCard ? (

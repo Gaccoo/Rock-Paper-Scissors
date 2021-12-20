@@ -22,15 +22,6 @@ import TableItems from '../TableItems/TableItems';
 import GameInfo from '../GameInfo/GameInfo';
 import { selectRandomOpponent } from '../../App';
 
-export type HandProps = {
-  isTurn: boolean
-  pCard: CardName | null
-  oCard: CardName | null
-  winner: CardName | null | 'Tie'
-  AI: {name: string, chips: number}
-  isLost: boolean
-}
-
 const generateOpponentCard = () => cards[Math.floor(Math.random() * (cards.length - 1))].name;
 
 const getHandWinner = (pCard: CardName, oCard: CardName) => {
@@ -49,7 +40,7 @@ const Game = () => {
   const [popup, setPopup] = useState(false);
   const dispatch = useAppDispatch();
   const player = useAppSelector((store) => store.playerSlice);
-  const CPUPlayer = useAppSelector((store) => store.AiSlice);
+  const computerPlayer = useAppSelector((store) => store.AiSlice);
   const hand = useAppSelector((store) => store.handSlice);
   const game = useAppSelector((store) => store.gameSlice);
   const playersRemaining = useAppSelector((state) => state.AiSlice
@@ -57,7 +48,7 @@ const Game = () => {
 
   const betAmount = () => {
     const playerChips = player.chips;
-    const CPUChips = CPUPlayer[hand.activeOpponent as any].chips;
+    const CPUChips = computerPlayer[hand.activeOpponent as any].chips;
     const bet = game.round * 200;
     return Math.min(playerChips, CPUChips, bet);
   };
@@ -110,25 +101,23 @@ const Game = () => {
     dispatch(addTurnCount());
   };
 
-  // Effects & Component
-
   useEffect(() => {
-    const hasNoChipsOpponent = CPUPlayer[hand.activeOpponent as any].chips < 10;
+    const hasNoChipsOpponent = computerPlayer[hand.activeOpponent as any].chips < 10;
     if (!playersRemaining || game.isLost) {
       dispatch(setGameWon());
     }
 
     if (hasNoChipsOpponent && playersRemaining) {
       dispatch(removeAiPlayer(hand.activeOpponent));
-      dispatch(setOpponent(selectRandomOpponent(CPUPlayer)));
+      dispatch(setOpponent(selectRandomOpponent(computerPlayer)));
       if (hand.pCard && hand.oCard) {
         dispatch(advanceRound());
       }
     }
-  }, [CPUPlayer[hand.activeOpponent as any]]);
+  }, [computerPlayer[hand.activeOpponent as any]]);
 
   useEffect(() => {
-    const remainingPlayers = CPUPlayer.filter((item) => !item.disqualified).length;
+    const remainingPlayers = computerPlayer.filter((item) => !item.disqualified).length;
     const isOpponentsTurn = hand.isTurn && !hand.oCard;
 
     if (player.chips < 10 && !game.isLost) {
@@ -154,7 +143,7 @@ const Game = () => {
       {!game.isLost && <TableItems />}
       <GameInfo />
       <GameControls onCardSelect={onSelectCard} activeCard={hand.pCard} hidden={game.isLost} />
-      {popup ? <Popup hand={hand} onClick={() => setPopup(false)} /> : null}
+      {popup ? <Popup hand={hand} /> : null}
     </div>
   );
 };

@@ -18,7 +18,6 @@
 
 .right-wins {
   animation: right-to-left 2s forwards;
-
 }
 
 .left-loses {
@@ -29,21 +28,15 @@
   animation: fade-right 2s forwards;
 }
 
-.no-wins {
-  animation: tie 3s forwards;
-}
-
-
 @keyframes left-to-right {
   0% {
     transform: translateX(0);
   }
-
   50% {
     transform: translateX(50%);
   }
   100% {
-    transform: translateX(150%) translateY(-20%) scale(1.5) rotate(-360deg);
+    transform: translateX(150%) translateY(20%) scale(1.5) rotate(-360deg);
   }
 }
 
@@ -69,7 +62,6 @@
   100% {
     transform: translateX(-150%);
   }
-
 }
 
 @keyframes fade-right {
@@ -81,14 +73,5 @@
   }
   100% {
     transform: translateX(150%) ;
-  }
-}
-
-@keyframes tie {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateY(300%);
   }
 }

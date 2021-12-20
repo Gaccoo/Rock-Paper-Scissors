@@ -1,7 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { CardName } from '../components/GameControls/GameControls';
 // Define a type for the slice state
 
-const initialState = {
+export type HandProps = {
+  isTurn: boolean
+  pCard: CardName | null
+  oCard: CardName | null
+  winner: CardName | null | 'Tie'
+  activeOpponent: number | null
+}
+
+const initialState: HandProps = {
   isTurn: true, pCard: null, oCard: null, winner: null, activeOpponent: null,
 };
 
