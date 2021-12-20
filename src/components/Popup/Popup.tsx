@@ -19,20 +19,15 @@ const Popup = ({ onClick, hand } : AppProps) => {
     if (playerWins) {
       return 'static-card left-wins';
     }
-    if (opponentWins) {
-      return 'static-card left-loses';
-    }
-    return 'static-card no-wins';
+
+    return 'static-card left-loses';
   };
 
   const opponentCardAnimationClassSelector = () => {
     if (opponentWins) {
       return 'static-card right-wins';
     }
-    if (playerWins) {
-      return 'static-card right-loses';
-    }
-    return 'static-card no-wins';
+    return 'static-card right-loses';
   };
 
   return (
