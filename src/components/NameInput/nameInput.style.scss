@@ -38,6 +38,18 @@
   font-size: calc(10px + .5vmin)
 }
 
+.button:hover {
+  opacity: .9;
+}
+
+.button:active {
+  border: 2px solid darkgoldenrod;
+}
+
+.button:disabled {
+  opacity: .6;
+}
+
 .error {
   color: red;
 }
