@@ -1,24 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import './Card.style.scss';
-import { CardName } from '../Controls/Controls';
+import { CardName } from '../GameControls/GameControls';
 
 type CardProps = {
   name: CardName
   id: number
   img: string
   onCardSelect?: (cardName: CardName) => void
-  activeCard?: CardName | undefined
+  activeCard?: CardName | null
+  className: string
 }
 
 const Card = ({
-  name, id, img, onCardSelect, activeCard,
+  name, id, img, onCardSelect, activeCard, className,
 }: CardProps) => {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
     setTimeout(() => {
       setVisible(true);
-    }, 3500);
+    }, 3000);
   }, [visible]);
 
   const clickHandler = (selected: CardName) => {
@@ -32,12 +33,12 @@ const Card = ({
     // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
     <div
       style={name === activeCard ? { opacity: 0 } : { opacity: 1 }}
-      className="card"
+      className={className}
       role="img"
       aria-label={name}
       onClick={() => clickHandler(name)}
     >
-      <img className="card-image" src={img} alt={name} />
+      <img className="card-image" id={id.toString()} src={img} alt={name} />
       <span>{name}</span>
     </div>
   );

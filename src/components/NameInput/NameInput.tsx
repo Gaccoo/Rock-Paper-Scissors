@@ -1,16 +1,26 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './nameInput.style.scss';
-import { Player } from '../../App';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { setPlayerName } from '../../store/playerSlice';
+import { goToGame } from '../../store/gameSlice';
+import { setOpponent } from '../../store/handSlice';
+import { selectRandomOpponent } from '../../App';
+import logo from '../../assets/poker-logo-white.png';
 
-type AppProps = {
-  onSubmit: (value: {name: string, age: number}) => void
-}
+const NameInput = () => {
+  const dispatch = useAppDispatch();
+  const AI = useAppSelector((store) => store.AiSlice);
 
-const NameInput = ({ onSubmit }: AppProps) => {
   const [nameInput, setNameInput] = useState({ name: '', age: 18 });
+
+  useEffect(() => {
+    dispatch(setOpponent(selectRandomOpponent(AI)));
+  }, []);
+
   const submitHandler = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
-    onSubmit(nameInput);
+    dispatch(setPlayerName(nameInput));
+    dispatch(goToGame());
   };
 
   const isButtonActive = () => {
@@ -21,6 +31,9 @@ const NameInput = ({ onSubmit }: AppProps) => {
 
   return (
     <div className="name-input">
+      <div className="logo">
+        <img className="image" src={logo} alt="Rock Paper Scissors Lizard Spock" />
+      </div>
       <form className="form" onSubmit={submitHandler}>
         <h2>Please enter your name</h2>
         <label className="label">
@@ -28,6 +41,7 @@ const NameInput = ({ onSubmit }: AppProps) => {
           <input
             className="input field"
             value={nameInput.name}
+            maxLength={20}
             onChange={(e) => setNameInput({ ...nameInput, name: e.target.value })}
             type="text"
             placeholder="Enter your name..."
@@ -43,8 +57,15 @@ const NameInput = ({ onSubmit }: AppProps) => {
             value={nameInput.age}
             onChange={(e) => setNameInput({ ...nameInput, age: +e.target.value })}
           />
+          <span
+            style={nameInput.age < 18 ? { opacity: 1 } : { opacity: 0 }}
+            className="error"
+          >
+            You must be 18 or older to gamble...
+          </span>
         </label>
-        <input disabled={!isButtonActive()} className="input field" type="submit" value="START GAME" />
+
+        <input disabled={!isButtonActive()} className="input button" type="submit" value="START GAME" />
       </form>
     </div>
   );

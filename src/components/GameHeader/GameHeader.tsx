@@ -1,16 +1,13 @@
 import React from 'react';
 import './GameHeader-style.scss';
-import { Player } from '../../App';
 import chipIcon from '../../assets/chip-icon.png';
 import logo from '../../assets/poker-logo-white.png';
+import { useAppSelector } from '../../store/hooks';
 
-type GameProps = {
-  player: Player
-  AI: {name: string, chips: number}
-}
-
-const GameHeader = ({ player, AI } : GameProps) => {
-  const a = 1;
+const GameHeader = () => {
+  const player = useAppSelector((store) => store.playerSlice);
+  const opponentIndex = useAppSelector((store) => store.handSlice.activeOpponent);
+  const opponent = useAppSelector((store) => store.AiSlice[opponentIndex as any]);
   return (
     <div className="game-header">
       <div className="player-window">
@@ -22,8 +19,8 @@ const GameHeader = ({ player, AI } : GameProps) => {
         <img className="logo-image" src={logo} alt="Logo" />
       </div>
       <div className="player-window right">
-        <span>{AI.name}</span>
-        <span>{AI.chips}</span>
+        <span>{opponent ? opponent.name : ''}</span>
+        <span>{opponent ? opponent.chips : ''}</span>
         <img className="chips-icon" src={chipIcon} alt="Chips" />
       </div>
     </div>

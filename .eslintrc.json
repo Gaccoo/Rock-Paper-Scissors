@@ -40,6 +40,7 @@
         "react/jsx-uses-react": "off",
         "react/react-in-jsx-scope": "off",
         "jsx-a11y/media-has-caption": "off",
+        "no-param-reassign": 0,
         "max-len": [1, {
             "code": 120
         }],

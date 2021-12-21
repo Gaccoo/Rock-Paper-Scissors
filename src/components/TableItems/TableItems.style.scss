@@ -1,0 +1,72 @@
+.player-stack-wrapper {
+  position: absolute;
+  left: 22%;
+  top: 44%;
+  transform: rotate(7deg);
+}
+
+.opponent-stack-wrapper {
+  position: absolute;
+  right: 30%;
+  top: 50%;
+  transform: rotate(10deg);
+}
+.stack-inner-wrapper {
+
+  position: relative;
+}
+
+.player-stack-1 {
+  position: absolute;
+  left: 0;
+  top: 60px;
+  z-index: 1;
+}
+
+.player-stack-2 {
+  position: absolute;
+  left: -5px;
+  top: 25px;
+  z-index: 2;
+}
+
+.player-stack-3 {
+  position: absolute;
+  left: 125px;
+  top: 35px;
+  z-index: 1;
+}
+
+.player-stack-4 {
+  position: absolute;
+  left: 120px;
+  top: 0;
+  z-index: 1
+}
+
+.player-stack-5 {
+  position: absolute;
+  z-index: 1
+}
+
+.player-stack-6 {
+  position: absolute;
+  left: 110px;
+  top: -30px;
+  z-index: 1
+}
+.player-stack-7 {
+  position: absolute;
+  left: 0;
+  top: -30px;
+  z-index: 0
+}
+
+.player-stack-8 {
+  position: absolute;
+  left: 80px;
+  top: -80px;
+  z-index: 0
+}
+
+
