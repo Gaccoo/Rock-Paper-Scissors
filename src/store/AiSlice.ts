@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-// Define a type for the slice state
 
 export type AIPlayer = {
   name: string
@@ -32,7 +31,7 @@ export const AiSlice = createSlice({
 
   },
 });
-// Action creators are generated for each case reducer function
+
 export const {
   addAiChips, removeAiChips, removeAiPlayer, resetAiSlice,
 } = AiSlice.actions;

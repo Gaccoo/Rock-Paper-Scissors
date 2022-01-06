@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-// Define a type for the slice state
 
 const initialState = {
   name: '', age: 18, chips: 2000, turns: 0,
@@ -26,7 +25,7 @@ export const playerSlice = createSlice({
     resetPlayerSlice: () => initialState,
   },
 });
-// Action creators are generated for each case reducer function
+
 export const {
   addPlayerChips, removePlayerChips, setPlayerName, resetPlayerSlice, addTurnCount,
 } = playerSlice.actions;
