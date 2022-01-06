@@ -17,7 +17,7 @@ Your objective is to try and beat 4 opponents by taking their chips.
 - If you win one opponent you get seated with the next one until all opponents are beaten, or you lose.
 - The game has a tiny secret that can allow you to win all hands, but again - it`s a secret.
 
-###👉 [TRY IT OUT HERE](https://stormy-tundra-57961.herokuapp.com/) 👈
+👉 [TRY IT OUT HERE](https://stormy-tundra-57961.herokuapp.com/) 👈
 
 
 ![Pre game](./not-project-related/1.JPG)
