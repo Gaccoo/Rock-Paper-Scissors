@@ -1,5 +1,5 @@
 # Rock - Paper - Scissors - Lizard - Spock
-## - Simple game using React
+## A Simple game using React
 
 The game starts with the user entering his name and age. Аs you know, you can\`t gamble if you`re not in legal age.
 

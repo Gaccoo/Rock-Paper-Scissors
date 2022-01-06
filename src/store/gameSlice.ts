@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-// Define a type for the slice state
 
 export type GameState = 'Lobby' | 'Game'
 
@@ -37,7 +36,7 @@ export const gameSlice = createSlice({
 
   },
 });
-// Action creators are generated for each case reducer function
+
 export const {
   goToGame, goToLobby, advanceRound, setGameLost, resetGameSlice, setGameWon,
 } = gameSlice.actions;

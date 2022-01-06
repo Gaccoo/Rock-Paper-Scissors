@@ -1,6 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { CardName } from '../components/GameControls/GameControls';
-// Define a type for the slice state
 
 export type HandProps = {
   isTurn: boolean
@@ -45,9 +44,8 @@ export const handSlice = createSlice({
     },
   },
 });
-// Action creators are generated for each case reducer function
 export const {
-  startNewHand, setWinner, setPlayerTableCard, setOpponentTableCard, setOpponent, setTurnDone, setTurnUndone,
+  startNewHand, setWinner, setPlayerTableCard, setOpponentTableCard, setOpponent, setTurnDone,
 } = handSlice.actions;
 
 export default handSlice.reducer;
